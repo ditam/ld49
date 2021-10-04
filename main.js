@@ -65,8 +65,7 @@ $(document).ready(function() {
 
   // audio assets
   const songs = [
-    new Audio('assets/sounds/Western.mp3'),
-    new Audio('assets/sounds/Un_desert.mp3')
+    new Audio('assets/sounds/Western.mp3')
   ];
 
   const sounds = [
@@ -84,15 +83,19 @@ $(document).ready(function() {
     }, false);
   }
 
+  songs.forEach(countWhenLoaded);
+  sounds.forEach(countWhenLoaded);
+
+  // we add some extra songs to the list - these need not block initial loading
+  songs.push(new Audio('assets/sounds/Un_desert.mp3'));
+
+  // we set up autoplay so the songs loop
   songs.forEach(function(song, i) {
-    countWhenLoaded(song);
     song.addEventListener('ended', function() {
       this.currentTime = 0;
       playNextSong();
     }, false);
   });
-
-  sounds.forEach(countWhenLoaded);
 
   let currentSongIndex = -1; // -1 so first call toggles to index 0
   function playNextSong() {
