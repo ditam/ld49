@@ -23,6 +23,7 @@ let shapeSide;
 let crosshairs;
 let glass;
 let liquid;
+let bottles;
 
 // ui elements
 let songs;
@@ -199,7 +200,7 @@ function scene2Ending() {
   }, 2000);
   setTimeout(() => {
     switchScene(1);
-    shapeFront.fadeTo(2000, 0.9);
+    shapeFront.fadeTo(2000, 0.8);
   }, 4000);
   setTimeout(() => {
     let msg, options;
@@ -342,10 +343,12 @@ function switchScene(newIndex) {
 
   if (currentScene === 3) {
     crosshairs.show();
-    shapeSide.fadeTo(3000, 0.9);
+    bottles.show();
+    shapeSide.fadeTo(3000, 0.8);
     cockGun();
   } else {
     crosshairs.hide();
+    bottles.hide();
   }
 }
 
@@ -492,6 +495,7 @@ $(document).ready(function() {
   crosshairs = $('#crosshairs');
   glass = $('.glass');
   liquid = $('.glass .liquid');
+  bottles = $('.bottle');
 
   // event handlers
   cover.on('click', function(event) {
@@ -515,6 +519,7 @@ $(document).ready(function() {
 
       shapeSide.hide();
       crosshairs.hide();
+      bottles.hide();
 
       daysSpent++;
       setTimeout(startNewScene, 12000);
