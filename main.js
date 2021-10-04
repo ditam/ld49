@@ -25,6 +25,7 @@ let glass;
 let liquid;
 
 // ui elements
+let songs;
 let cockingSound;
 let gunshotSound;
 let bottleBreakSound;
@@ -39,10 +40,11 @@ let glassSliding = false;
 let glassFilling = false;
 let slideStart = 0;
 let fillStart = 0;
+let daysSpent = 0;
 
 function playIntro() {
   // Intro starts when cover is removed and music is started
-  let scr1, scr2, scr3;
+  let scr1, scr2, scr3, scr4;
   setTimeout(() => {
     footstepsSound.play();
   }, 5000);
@@ -86,25 +88,53 @@ function playIntro() {
     pourSound.play();
   }, 22000);
   setTimeout(() => {
-    footstepsSound.play();
-  }, 23000);
+    scr3.empty();
+    songs[0].volume = 0.85;
+  }, 25000);
   setTimeout(() => {
+    songs[0].volume = 0.7;
+    scr4 = $('<div></div>').addClass('quote-screen');
+    const quote = `
+      <div>From a pot of wine</div>
+      <div>among the flowers</div>
+      <div>I drank alone.</div>
+      <div class="author">/ Li Bai /</div>
+    `;
+    $('<div></div>').addClass('quote').html(quote).appendTo(scr4);
+    scr4.appendTo(wrapper);
     scr3.remove();
-  }, 27000);
-  // TODO: add Li Bai quote?
-  // TODO: lower music volume?
+  }, 28000);
+  setTimeout(() => {
+    footstepsSound.play();
+  }, 29000);
+  setTimeout(() => {
+    scr4.remove();
+  }, 33000);
 
-  setTimeout(startConversation, 29000);
+  // TODO: use startNewScene?
+  setTimeout(startConversation, 35000);
 }
 
 function startConversation() {
-  showBarmanMessage('Hello, Colton. How was your day?');
-  setTimeout(() => {
-    showOptions([
+  let msg, options;
+  if (daysSpent === 0) {
+    msg = 'Hello, Colton. How was your day?';
+    options = [
       { text: 'Hey!', response: 'Let me guess, a drink?', isTerminal: true },
       { text: 'Not too bad, thanks.', response: 'How about a drink?', isTerminal: true },
       { text: 'My day starts when I see you, Luna.', response: 'Oh, you charmer. A drink\'s 5 cents for everyone.', isTerminal: true }
-    ]);
+    ];
+  } else {
+    msg = getRandomItem(['Howdy, cowboy.', 'Colton.', 'Good day.']);
+    options = [
+      { text: 'How you doin?', response: 'Good, how are you?', isTerminal: true },
+      { text: 'Always a pleasure.', response: 'I don\'t doubt that.', isTerminal: true }
+    ];
+  }
+
+  showBarmanMessage(msg);
+  setTimeout(() => {
+    showOptions(options);
   }, 2000);
 }
 
@@ -134,9 +164,12 @@ function startWhatDrinkConvo() {
       ]);
       showBarmanMessage(description);
     }, 2000);
-    showOptions([{ text: 'Hit me.', effect: getDrink }]);
+    setTimeout(()=> {
+      showOptions([{ text: 'Hit me.', effect: getDrink }]);
+    }, 2500);
   }
 
+  // TODO: branch based on daysSpent -> unlock victory path
   const drinkName = getRandomItem(['Mule Skinner', 'Whiskey', 'Rotgut', 'Moonshine', 'Sheepdip']);
   showBarmanMessage(drinkName);
   setTimeout(() => {
@@ -153,7 +186,7 @@ function getDrink() {
     showOptions([
       { text: '[Take drink]', effect: scene2Ending }
     ]);
-  }, 5000);
+  }, 6000);
 }
 
 function scene2Ending() {
@@ -169,13 +202,25 @@ function scene2Ending() {
     shapeFront.fadeTo(2000, 0.9);
   }, 4000);
   setTimeout(() => {
-    showVillainMessage('Hiding from me? We have unfinished business.');
-    setTimeout(() => {
-      showOptions([
+    let msg, options;
+    if (daysSpent === 0) {
+      msg = 'Hiding from me? We have unfinished business.';
+      options = [
         { text: 'I\'m waiting for you.', villainResponse: 'Out back, then.', isTerminal: true, targetScene: 3 },
         { text: 'I just wanted to have a drink first.', villainResponse: 'Helps with your aim?', isTerminal: true, targetScene: 3 },
         { text: 'What do you mean?', villainResponse: 'Show me if you can shoot yet.', isTerminal: true, targetScene: 3 }
-      ]);
+      ];
+    } else {
+      msg = 'I knew I\'d find you here.';
+      options = [
+        { text: 'Have you been practicing?', villainResponse: 'I\'ll show you.', isTerminal: true, targetScene: 3 },
+        { text: 'You\'re a true detective.', villainResponse: 'And a sharpshooter.', isTerminal: true, targetScene: 3 },
+        { text: 'Let\'s get it over with.', villainResponse: 'After you.', isTerminal: true, targetScene: 3 }
+      ];
+    }
+    showVillainMessage(msg);
+    setTimeout(() => {
+      showOptions(options);
     }, 2000);
   }, 7000);
 }
@@ -242,11 +287,15 @@ function showPlayerMessage(msg) {
 }
 
 function startNewScene() {
+  $('.quote-screen').remove();
   $('.msg').remove();
   const newScene = (currentScene === 3)? 1 : currentScene+1;
   switchScene(newScene);
 
-  // TODO: move startConversation here as branch 1
+  if (newScene === 1) {
+    startConversation();
+  }
+
   if (newScene === 2) {
     startScene2();
   } else {
@@ -293,6 +342,7 @@ function switchScene(newIndex) {
 
   if (currentScene === 3) {
     crosshairs.show();
+    shapeSide.fadeTo(3000, 0.9);
     cockGun();
   } else {
     crosshairs.hide();
@@ -377,7 +427,7 @@ $(document).ready(function() {
   preloadImage('assets/img/crosshairs.png');
 
   // audio assets
-  const songs = [
+  songs = [
     new Audio('assets/sounds/Western.mp3')
   ];
 
@@ -449,10 +499,10 @@ $(document).ready(function() {
     cover.remove();
     playNextSong();
 
-    // FIXME: re-add for final build and remove startConvo here
-    //playIntro();
+    playIntro();
 
-    startConversation();
+    // DEBUG
+    //startConversation();
 
     return false;
   });
@@ -462,11 +512,57 @@ $(document).ready(function() {
       // TODO: shot calculation should use the same coords as the crosshair
       console.log('shot at:', event.clientX, event.clientY);
       gunshotSound.play();
+
+      shapeSide.hide();
+      crosshairs.hide();
+
+      daysSpent++;
+      setTimeout(startNewScene, 12000);
+
       // FIXME: based on shot location
-      if (Math.random() < 0.5) {
+      let scr, quote;
+      if (event.clientX < 200) {
+        scr = $('<div></div>').addClass('quote-screen');
+        quote = `
+          <div>I went to the worst of bars</div>
+          <div>hoping to get</div>
+          <div>killed.</div>
+          <div>but all I could do was to</div>
+          <div>get drunk</div>
+          <div>again.</div>
+          <div class="author">/ Charles Bukowski /</div>
+        `;
+        $('<div></div>').addClass('quote').html(quote).appendTo(scr);
+        scr.appendTo(wrapper);
+        // TODO: continue on scene 1 after timeout
+      } else if (Math.random() < 0.5) {
         setTimeout(() => {
           bottleBreakSound.play();
         }, 300);
+
+        scr = $('<div></div>').addClass('quote-screen small');
+        quote = `
+          <div>From a pot of wine among the flowers</div>
+          <div>I drank alone. There was no one with me —</div>
+          <div>Till, raising my cup, I asked the bright moon</div>
+          <div>To bring me my shadow and make us three.</div>
+          <div class="author">/ Li Bai /</div>
+        `;
+        $('<div></div>').addClass('quote').html(quote).appendTo(scr);
+        scr.appendTo(wrapper);
+      } else {
+        scr = $('<div></div>').addClass('quote-screen small');
+        quote = `
+          <div>O for a beaker full of the warm South,</div>
+          <div>Full of the true, the blushful Hippocrene,</div>
+          <div>With beaded bubbles winking at the brim,</div>
+          <div>And purple-stained mouth;</div>
+          <div>That I might drink, and leave the world unseen,</div>
+          <div>And with thee fade away into the forest dim</div>
+          <div class="author">/ John Keats /</div>
+        `;
+        $('<div></div>').addClass('quote').html(quote).appendTo(scr);
+        scr.appendTo(wrapper);
       }
     }
 
