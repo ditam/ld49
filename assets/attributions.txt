@@ -1,5 +1,5 @@
 Audio files in the /sounds folder are all licensed under Creative Commons licenses.
-Some were edited, some are used verbatim.
+Some were heavily edited, some are used verbatim.
 
 Music:
 ======
@@ -11,10 +11,16 @@ Un_desert - Loyalty Freak Music on OpenGameArt.org, https://opengameart.org/cont
 Sound effects:
 ==============
 
+bottle_break - spookymodem on OpenGameArt.org, https://opengameart.org/content/breaking-bottle
+
 cocking - acidsnowflake on freesound.org, https://freesound.org/people/acidsnowflake/sounds/402790/
+
+door - aglinder on freesound.org, https://freesound.org/people/aglinder/sounds/265583/
+
+footsteps - CGEffex on freesound.org, https://freesound.org/people/CGEffex/sounds/98816/
 
 gunshot - Q009 via Calinou on OpenGameArt.org, https://opengameart.org/content/q009s-weapon-sounds
 
-slide - Hansjörg Malthaner, Varkalandar on OpenGameArt.org
-https://opengameart.org/users/varkalandar
-https://opengameart.org/content/rockmetal-slide
+pour - Arthur on OpenGameArt.org, https://opengameart.org/content/running-water
+
+slide - Hansjörg Malthaner, Varkalandar on OpenGameArt.org, https://opengameart.org/users/varkalandar, https://opengameart.org/content/rockmetal-slide

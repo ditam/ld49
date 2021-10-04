@@ -9,6 +9,11 @@ let crosshairs;
 // ui elements
 let cockingSound;
 let gunshotSound;
+let bottleBreakSound;
+let doorSound;
+let footstepsSound;
+let slideSound;
+let pourSound;
 
 // game state
 let currentScene = 1;
@@ -64,8 +69,6 @@ function drawCrosshairs() {
 
 
 $(document).ready(function() {
-  console.log('Hello LD49!');
-
   // image assets
   preloadImage('assets/img/scene1_bg.jpg');
   preloadImage('assets/img/scene2_bg.jpg');
@@ -78,13 +81,23 @@ $(document).ready(function() {
     new Audio('assets/sounds/Western.mp3')
   ];
 
+  cockingSound = new Audio('assets/sounds/cocking.mp3');
+  gunshotSound = new Audio('assets/sounds/gunshot.mp3');
+  bottleBreakSound = new Audio('assets/sounds/bottle_break.mp3');
+  doorSound = new Audio('assets/sounds/door.mp3');
+  footstepsSound = new Audio('assets/sounds/footsteps.mp3');
+  slideSound = new Audio('assets/sounds/slide.mp3');
+  pourSound = new Audio('assets/sounds/pour.mp3');
+
   const sounds = [
-    new Audio('assets/sounds/slide.mp3'),
-    new Audio('assets/sounds/cocking.mp3'),
-    new Audio('assets/sounds/gunshot.mp3'),
+    cockingSound,
+    gunshotSound,
+    bottleBreakSound,
+    doorSound,
+    footstepsSound,
+    slideSound,
+    pourSound
   ];
-  cockingSound = sounds[1];
-  gunshotSound = sounds[2];
 
   let audioLoadCount = 0;
   $('.loadCountTotal').text(songs.length + sounds.length);
@@ -137,6 +150,7 @@ $(document).ready(function() {
 
   wrapper.on('click', event => {
     if (currentScene === 3) {
+      // TODO: shot calculation should use the same coords as the crosshair
       console.log('shot at:', event.clientX, event.clientY);
       gunshotSound.play();
     }
