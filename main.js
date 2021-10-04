@@ -2,8 +2,15 @@
 const WIDTH = 1366;
 const HEIGHT = 768;
 
+// dom elements
 let wrapper;
 let crosshairs;
+
+// ui elements
+let cockingSound;
+let gunshotSound;
+
+// game state
 let currentScene = 1;
 
 function switchScene(newIndex) {
@@ -16,6 +23,9 @@ function switchScene(newIndex) {
 
   if (currentScene === 3) {
     crosshairs.show();
+    setTimeout(() => {
+      cockingSound.play();
+    }, 500);
   } else {
     crosshairs.hide();
   }
@@ -73,6 +83,8 @@ $(document).ready(function() {
     new Audio('assets/sounds/cocking.mp3'),
     new Audio('assets/sounds/gunshot.mp3'),
   ];
+  cockingSound = sounds[1];
+  gunshotSound = sounds[2];
 
   let audioLoadCount = 0;
   $('.loadCountTotal').text(songs.length + sounds.length);
@@ -126,6 +138,7 @@ $(document).ready(function() {
   wrapper.on('click', event => {
     if (currentScene === 3) {
       console.log('shot at:', event.clientX, event.clientY);
+      gunshotSound.play();
     }
 
     const newScene = (currentScene === 3)? 1 : currentScene+1;
