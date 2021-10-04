@@ -50,6 +50,7 @@ body {
   border: 20px solid #a29cd15e;
   border-radius: 1000px;
   backdrop-filter: blur(8px) contrast(0.7);
+  -webkit-backdrop-filter: blur(8px) contrast(0.7);
   display: none;
 }
 
@@ -112,10 +113,70 @@ body {
 
 .msg {
   position: absolute;
-  top: 100px;
-  left: 0;
-  padding: 30px;
-  font-size: 36px;
-  background-color: black;
+  font-family: 'Libre Baskerville', serif;
+  font-style: italic;
+  padding: 20px;
+  font-size: 32px;
+  background: linear-gradient(315deg, #221010, #000000);
+  box-shadow: 5px 0px 5px 0px rgb(0 0 0 / 20%);
   color: white;
+}
+
+.msg.barman {
+  top: 60px;
+  left: 0;
+  padding-left: 80px;
+  border-bottom: 3px solid #540064;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+  transition: left 0.5s;
+}
+
+.msg.option {
+  left: 200px;
+  padding-left: 80px;
+  font-style: normal;
+  border-bottom: 3px solid rgb(94, 94, 94);
+  border-radius: 5px;
+  cursor: pointer;
+  transition: left 0.3s;
+}
+
+.msg.option:hover {
+  left: 215px;
+}
+
+.msg.option.first {
+  top: 300px;
+}
+.msg.option.first:before {
+  content: 'A';
+  color: rgba(128, 128, 128, 0.35);
+  margin-left: -50px;
+  margin-right: 20px;
+}
+.msg.option.second {
+  top: 400px;
+}
+.msg.option.second:before {
+  content: 'B';
+  color: rgba(128, 128, 128, 0.35);
+  margin-left: -50px;
+  margin-right: 20px;
+}
+.msg.option.third {
+  top: 500px;
+}
+.msg.option.third:before {
+  content: 'C';
+  color: rgba(128, 128, 128, 0.35);
+  margin-left: -50px;
+  margin-right: 20px;
+}
+
+.msg.player {
+  top: 660px;
+  left: 200px;
+  border-bottom: 3px solid #22009b;
+  border-radius: 10px;
 }

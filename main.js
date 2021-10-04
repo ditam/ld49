@@ -85,14 +85,63 @@ function playIntro() {
   setTimeout(() => {
     scr3.remove();
   }, 27000);
+  // TODO: add Li Bai quote?
+  // TODO: lower music volume?
 
-  // DEBUG
+  setTimeout(startConversation, 29000);
+}
+
+function startConversation() {
+  showBarmanMessage('Hello, Colton. How was your day?');
   setTimeout(() => {
-    $('<div></div>').addClass('msg').text('Hello, Colton').appendTo(wrapper);
-  }, 29000);
-  setTimeout(() => {
-    $('.msg').remove();
-  }, 33000);
+    showOptions([
+      { text: 'Hey!', response: 'Let me guess, a drink?', isTerminal: true },
+      { text: 'Not too bad, thanks.', response: 'How about a drink?', isTerminal: true },
+      { text: 'My day starts when I see you, Luna.', response: 'Oh, you charmer. A drink\'s 5 cents for everyone.', isTerminal: true }
+    ]);
+  }, 2000);
+}
+
+function showOptions(options) {
+  options.forEach((option, i) => {
+    const positionClass = ['first', 'second', 'third'][i];
+    const msg = $('<div></div>').addClass('msg option').addClass(positionClass).text(option.text).appendTo(wrapper);
+    msg.data('meta', option);
+    msg.on('click', function() {
+      // TODO: not every option leads to a message
+      const meta = $(this).data('meta');
+      showPlayerMessage(meta);
+      $('.msg.option').remove();
+    });
+  });
+}
+
+function showBarmanMessage(msgString) {
+  console.assert(typeof msgString === 'string');
+  $('<div></div>').addClass('msg barman').text(msgString).appendTo(wrapper);
+}
+
+function showPlayerMessage(msg) {
+  const text = msg.text;
+  console.assert(typeof text === 'string');
+  $('<div></div>').addClass('msg player').text(text).appendTo(wrapper);
+  $('.msg.barman').css({left: -WIDTH});
+  if (msg.response) {
+    setTimeout(() => {
+      $('.msg.barman').remove();
+      showBarmanMessage(msg.response);
+    }, 500);
+  }
+  if (msg.isTerminal) {
+    setTimeout(startNewScene, 5000);
+  }
+}
+
+function startNewScene() {
+  $('.msg').remove();
+  const newScene = (currentScene === 3)? 1 : currentScene+1;
+  switchScene(newScene);
+  console.log('NEWSCENE');
 }
 
 function switchScene(newIndex) {
@@ -277,12 +326,17 @@ $(document).ready(function() {
     cover.remove();
     playNextSong();
 
-    playIntro();
+    // FIXME: re-add for final build and remove startConvo here
+    //playIntro();
+
+    startConversation();
 
     return false;
   });
 
   wrapper.on('click', event => {
+    return;
+    // DEBUG
     if (currentScene === 3) {
       // TODO: shot calculation should use the same coords as the crosshair
       console.log('shot at:', event.clientX, event.clientY);
