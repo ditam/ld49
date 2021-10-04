@@ -223,6 +223,12 @@ $(document).ready(function() {
       // TODO: shot calculation should use the same coords as the crosshair
       console.log('shot at:', event.clientX, event.clientY);
       gunshotSound.play();
+      // FIXME: based on shot location
+      if (Math.random() < 0.5) {
+        setTimeout(() => {
+          bottleBreakSound.play();
+        }, 300);
+      }
     }
 
     const newScene = (currentScene === 3)? 1 : currentScene+1;
