@@ -1,0 +1,11 @@
+Audio files in the /sounds folder are all licensed under Creative Commons licenses.
+Some were edited, some are used verbatim.
+
+Music:
+Western - Markus Lindner, linxiaoma on OpenGameArt.org, https://opengameart.org/content/spaghetti-western-theme-orchestral
+Un_desert - Loyalty Freak Music on OpenGameArt.org, https://opengameart.org/content/un-d%C3%A9sert
+
+Sound effects:
+slide - Hansjörg Malthaner, Varkalandar on OpenGameArt.org
+https://opengameart.org/users/varkalandar
+https://opengameart.org/content/rockmetal-slide
