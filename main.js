@@ -34,6 +34,67 @@ let glassFilling = false;
 let slideStart = 0;
 let fillStart = 0;
 
+function playIntro() {
+  // Intro starts when cover is removed and music is started
+  let scr1, scr2, scr3;
+  setTimeout(() => {
+    footstepsSound.play();
+  }, 5000);
+  setTimeout(() => {
+    scr1 = $('<div></div>').addClass('intro-screen');
+    $('<div></div>').addClass('label').text('ditam presents').appendTo(scr1);
+    scr1.appendTo(wrapper);
+  }, 7000);
+  setTimeout(() => {
+    doorSound.play();
+  }, 10000);
+  setTimeout(() => {
+    footstepsSound.play();
+    scr1.empty();
+  }, 11000);
+  setTimeout(() => {
+    cockingSound.play();
+  }, 12000);
+  setTimeout(() => {
+    scr2 = $('<div></div>').addClass('intro-screen');
+    $('<div></div>').addClass('title').text('Pale Moon Shone').appendTo(scr2);
+    scr2.appendTo(wrapper);
+    scr1.remove();
+    gunshotSound.play();
+  }, 13000);
+  setTimeout(() => {
+    $('<div></div>').addClass('title-connector').text('- or -').appendTo(scr2);
+  }, 16000);
+  setTimeout(() => {
+    $('<div></div>').addClass('title-secondary').text('The Ballad of Colton Boone').appendTo(scr2);
+    slideSound.play();
+  }, 17000);
+  setTimeout(() => {
+    scr2.empty();
+  }, 21000);
+  setTimeout(() => {
+    scr3 = $('<div></div>').addClass('intro-screen');
+    $('<div></div>').addClass('label').text('A game made for Ludum Dare 49').appendTo(scr3);
+    scr3.appendTo(wrapper);
+    scr2.remove();
+    pourSound.play();
+  }, 22000);
+  setTimeout(() => {
+    footstepsSound.play();
+  }, 23000);
+  setTimeout(() => {
+    scr3.remove();
+  }, 27000);
+
+  // DEBUG
+  setTimeout(() => {
+    $('<div></div>').addClass('msg').text('Hello, Colton').appendTo(wrapper);
+  }, 29000);
+  setTimeout(() => {
+    $('.msg').remove();
+  }, 33000);
+}
+
 function switchScene(newIndex) {
   console.assert([1,2,3].includes(newIndex));
 
@@ -215,6 +276,9 @@ $(document).ready(function() {
     console.log('removing cover');
     cover.remove();
     playNextSong();
+
+    playIntro();
+
     return false;
   });
 
