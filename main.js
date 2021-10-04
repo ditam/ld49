@@ -70,7 +70,9 @@ $(document).ready(function() {
   ];
 
   const sounds = [
-    new Audio('assets/sounds/slide.mp3')
+    new Audio('assets/sounds/slide.mp3'),
+    new Audio('assets/sounds/cocking.mp3'),
+    new Audio('assets/sounds/gunshot.mp3'),
   ];
 
   let audioLoadCount = 0;
