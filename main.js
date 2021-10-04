@@ -27,6 +27,31 @@ function preloadImage(url) {
   return img;
 }
 
+let mouseX = 0;
+let mouseY = 0;
+let diffX = 0;
+let diffY = 0;
+function applyDrunkEffects(time) {
+  const cycleTime = 6000;
+  const t = time / cycleTime;
+  // TODO: this and cycleTime will increase with drunkenness
+  const wobbleRadius = 30;
+  diffX = Math.sin(t * Math.PI*2) * wobbleRadius;
+  diffY = Math.sin(t * Math.PI*2) * Math.cos(t * Math.PI*2) * wobbleRadius;
+
+  drawCrosshairs();
+
+  requestAnimationFrame(applyDrunkEffects);
+}
+
+const crosshairSize = 64;
+function drawCrosshairs() {
+  crosshairs.css({
+    left: Math.min(mouseX + diffX, WIDTH - crosshairSize/2),
+    top: Math.min(mouseY + diffY, HEIGHT - crosshairSize/2)
+  });
+}
+
 
 $(document).ready(function() {
   console.log('Hello LD49!');
@@ -103,11 +128,11 @@ $(document).ready(function() {
     switchScene(newScene);
   });
 
-  const crosshairSize = 64;
   wrapper.on('mousemove', event => {
-    crosshairs.css({
-      left: Math.min(event.clientX, WIDTH - crosshairSize),
-      top: Math.min(event.clientY, HEIGHT - crosshairSize)
-    });
+    mouseX = event.clientX;
+    mouseY = event.clientY;
   });
+
+  // start animation loop
+  applyDrunkEffects();
 });
