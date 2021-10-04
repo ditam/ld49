@@ -2,9 +2,21 @@
 const WIDTH = 1366;
 const HEIGHT = 768;
 
+const SLIDE_DURATION = 1050; // length of slide audio in ms
+const FILL_DURATION = 1700; // length of pour audio in ms
+
+const GLASS_POSITION = {
+  x0: 500,
+  y0: -500,
+  x: 700,
+  y: 200
+};
+
 // dom elements
 let wrapper;
 let crosshairs;
+let glass;
+let liquid;
 
 // ui elements
 let cockingSound;
@@ -17,6 +29,10 @@ let pourSound;
 
 // game state
 let currentScene = 1;
+let glassSliding = false;
+let glassFilling = false;
+let slideStart = 0;
+let fillStart = 0;
 
 function switchScene(newIndex) {
   console.assert([1,2,3].includes(newIndex));
@@ -25,6 +41,22 @@ function switchScene(newIndex) {
 
   wrapper.removeClass('scene1 scene2 scene3');
   wrapper.addClass('scene' + currentScene);
+
+  if (currentScene === 2) {
+    glass.show();
+    setTimeout(() => {
+      slideSound.play();
+      glassSliding = true;
+      slideStart = lastDrawTime;
+    }, 500);
+    setTimeout(() => {
+      pourSound.play();
+      glassFilling = true;
+      fillStart = lastDrawTime;
+    }, 3000);
+  } else {
+    glass.hide();
+  }
 
   if (currentScene === 3) {
     crosshairs.show();
@@ -46,7 +78,9 @@ let mouseX = 0;
 let mouseY = 0;
 let diffX = 0;
 let diffY = 0;
-function applyDrunkEffects(time) {
+let lastDrawTime;
+function animationStep(time) {
+  lastDrawTime = time;
   const cycleTime = 6000;
   const t = time / cycleTime;
   // TODO: this and cycleTime will increase with drunkenness
@@ -56,15 +90,49 @@ function applyDrunkEffects(time) {
 
   drawCrosshairs();
 
-  requestAnimationFrame(applyDrunkEffects);
+  if (glassSliding) {
+    const slideTimePassed = time - slideStart;
+    const slideProgress = Math.min(1, slideTimePassed / SLIDE_DURATION);
+
+    const x0 = GLASS_POSITION.x0;
+    const y0 = GLASS_POSITION.y0;
+    const xFinal = GLASS_POSITION.x;
+    const yFinal = GLASS_POSITION.y;
+
+    glass.css({
+      left: x0 + (xFinal - x0) * slideProgress,
+      top: y0 + (yFinal - y0) * slideProgress
+    });
+
+    if (slideProgress === 1) {
+      glassSliding = false;
+    }
+  }
+
+  if (glassFilling) {
+    const fillTimePassed = time - fillStart;
+    const fillProgress = Math.min(1, fillTimePassed / FILL_DURATION);
+
+    liquid.css({
+      opacity: fillProgress
+    });
+
+    if (fillProgress === 1) {
+      glassFilling = false;
+    }
+  }
+
+  requestAnimationFrame(animationStep);
 }
 
 const crosshairSize = 64;
 function drawCrosshairs() {
-  crosshairs.css({
-    left: Math.min(mouseX + diffX, WIDTH - crosshairSize/2),
-    top: Math.min(mouseY + diffY, HEIGHT - crosshairSize/2)
-  });
+  if (currentScene === 3) {
+    crosshairs.css({
+      left: Math.min(mouseX + diffX, WIDTH - crosshairSize/2),
+      top: Math.min(mouseY + diffY, HEIGHT - crosshairSize/2)
+    });
+  }
 }
 
 
@@ -138,6 +206,8 @@ $(document).ready(function() {
   wrapper.addClass('scene1');
 
   crosshairs = $('#crosshairs');
+  glass = $('.glass');
+  liquid = $('.glass .liquid');
 
   // event handlers
   cover.on('click', function(event) {
@@ -166,5 +236,5 @@ $(document).ready(function() {
   });
 
   // start animation loop
-  applyDrunkEffects();
+  animationStep();
 });
