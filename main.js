@@ -18,6 +18,8 @@ function getRandomItem(array) {
 
 // dom elements
 let wrapper;
+let shapeFront;
+let shapeSide;
 let crosshairs;
 let glass;
 let liquid;
@@ -158,10 +160,24 @@ function scene2Ending() {
   // TODO: it would be nice to have an animation here too
   glass.hide();
   setTimeout(() => {
+    $('.msg.player').remove();
     doorSound.play();
     showVillainMessage('Boone!');
   }, 2000);
-  // TODO: switch to scene 1, show silhouette without footsteps
+  setTimeout(() => {
+    switchScene(1);
+    shapeFront.fadeTo(2000, 0.9);
+  }, 4000);
+  setTimeout(() => {
+    showVillainMessage('Hiding from me? We have unfinished business.');
+    setTimeout(() => {
+      showOptions([
+        { text: 'I\'m waiting for you.', villainResponse: 'Out back, then.', isTerminal: true, targetScene: 3 },
+        { text: 'I just wanted to have a drink first.', villainResponse: 'Helps with your aim?', isTerminal: true, targetScene: 3 },
+        { text: 'What do you mean?', villainResponse: 'Show me if you can shoot yet.', isTerminal: true, targetScene: 3 }
+      ]);
+    }, 2000);
+  }, 7000);
 }
 
 // Messaging utils
@@ -198,10 +214,17 @@ function showPlayerMessage(msg) {
   $('.msg.player').remove();
   $('<div></div>').addClass('msg player').text(text).appendTo(wrapper);
   $('.msg.barman').css({left: -WIDTH});
+  $('.msg.villain').css({right: -WIDTH});
   if (msg.response) {
     setTimeout(() => {
       $('.msg.barman').remove();
       showBarmanMessage(msg.response);
+    }, 500);
+  }
+  if (msg.villainResponse) {
+    setTimeout(() => {
+      $('.msg.villain').remove();
+      showVillainMessage(msg.villainResponse);
     }, 500);
   }
   if (msg.effect) {
@@ -210,7 +233,11 @@ function showPlayerMessage(msg) {
   }
   if (msg.isTerminal) {
     footstepsSound.play();
-    setTimeout(startNewScene, 5000);
+    if (msg.targetScene) {
+      // silently set the internal scene state to jump to any scene without showing the previous background
+      currentScene = msg.targetScene - 1;
+    }
+    setTimeout(startNewScene, 5000); // should be always more than the effect delay, so effect can happen first
   }
 }
 
@@ -247,6 +274,7 @@ function passDrink() {
 }
 
 function cockGun() {
+  console.assert(currentScene === 3);
   setTimeout(() => {
     cockingSound.play();
   }, 500);
@@ -259,6 +287,9 @@ function switchScene(newIndex) {
 
   wrapper.removeClass('scene1 scene2 scene3');
   wrapper.addClass('scene' + currentScene);
+
+  shapeFront.hide();
+  shapeSide.hide();
 
   if (currentScene === 3) {
     crosshairs.show();
@@ -281,10 +312,10 @@ let diffY = 0;
 let lastDrawTime;
 function animationStep(time) {
   lastDrawTime = time;
-  const cycleTime = 6000;
+  const cycleTime = 5000;
   const t = time / cycleTime;
   // TODO: this and cycleTime will increase with drunkenness
-  const wobbleRadius = 30;
+  const wobbleRadius = 60;
   diffX = Math.sin(t * Math.PI*2) * wobbleRadius;
   diffY = Math.sin(t * Math.PI*2) * Math.cos(t * Math.PI*2) * wobbleRadius;
 
@@ -342,6 +373,7 @@ $(document).ready(function() {
   preloadImage('assets/img/scene2_bg.jpg');
   preloadImage('assets/img/scene3_bg.jpg');
 
+  preloadImage('assets/img/villain_front.png');
   preloadImage('assets/img/crosshairs.png');
 
   // audio assets
@@ -405,6 +437,8 @@ $(document).ready(function() {
 
   wrapper.addClass('scene1');
 
+  shapeFront = $('.shape-front');
+  shapeSide = $('.shape-side');
   crosshairs = $('#crosshairs');
   glass = $('.glass');
   liquid = $('.glass .liquid');
@@ -412,7 +446,6 @@ $(document).ready(function() {
   // event handlers
   cover.on('click', function(event) {
     // we need a user interaction to start audio
-    console.log('removing cover');
     cover.remove();
     playNextSong();
 
@@ -425,8 +458,6 @@ $(document).ready(function() {
   });
 
   wrapper.on('click', event => {
-    return;
-    // DEBUG
     if (currentScene === 3) {
       // TODO: shot calculation should use the same coords as the crosshair
       console.log('shot at:', event.clientX, event.clientY);
@@ -439,6 +470,8 @@ $(document).ready(function() {
       }
     }
 
+    return;
+    // DEBUG
     const newScene = (currentScene === 3)? 1 : currentScene+1;
     console.log('newScene:', newScene);
     switchScene(newScene);
