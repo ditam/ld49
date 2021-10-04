@@ -12,6 +12,10 @@ const GLASS_POSITION = {
   y: 200
 };
 
+function getRandomItem(array) {
+  return array[Math.floor(Math.random() * array.length)];
+}
+
 // dom elements
 let wrapper;
 let crosshairs;
@@ -102,6 +106,66 @@ function startConversation() {
   }, 2000);
 }
 
+function startScene2() {
+  setTimeout(() => {
+    showBarmanMessage('What will it be?');
+  }, 1000);
+  setTimeout(() => {
+    showOptions([
+      { text: 'What do you have?', effect: startWhatDrinkConvo },
+      { text: 'Whiskey', effect: getDrink }
+    ]);
+  }, 3000);
+}
+
+function startWhatDrinkConvo() {
+  function randomDesc() {
+    setTimeout(() => {
+      const description = getRandomItem([
+        'It\'s hotter than mustard.',
+        'It\'s milder than cream.',
+        'It\'s clearer than crystal.',
+        'It\'s sweeter than honey.',
+        'It\'s stronger than steam.',
+        'It\'ll make the lame walk.',
+        'It\'ll make the dumb talk'
+      ]);
+      showBarmanMessage(description);
+    }, 2000);
+    showOptions([{ text: 'Hit me.', effect: getDrink }]);
+  }
+
+  const drinkName = getRandomItem(['Mule Skinner', 'Whiskey', 'Rotgut', 'Moonshine', 'Sheepdip']);
+  showBarmanMessage(drinkName);
+  setTimeout(() => {
+    showOptions([
+      { text: 'What\'s it like?', effect: randomDesc },
+      { text: 'I\'ll take it.', effect: getDrink }
+    ]);
+  }, 2000);
+}
+
+function getDrink() {
+  setTimeout(passDrink, 1500);
+  setTimeout(() => {
+    showOptions([
+      { text: '[Take drink]', effect: scene2Ending }
+    ]);
+  }, 5000);
+}
+
+function scene2Ending() {
+  // TODO: it would be nice to have an animation here too
+  glass.hide();
+  setTimeout(() => {
+    doorSound.play();
+    showVillainMessage('Boone!');
+  }, 2000);
+  // TODO: switch to scene 1, show silhouette without footsteps
+}
+
+// Messaging utils
+
 function showOptions(options) {
   options.forEach((option, i) => {
     const positionClass = ['first', 'second', 'third'][i];
@@ -118,12 +182,20 @@ function showOptions(options) {
 
 function showBarmanMessage(msgString) {
   console.assert(typeof msgString === 'string');
+  $('.msg.barman').remove();
   $('<div></div>').addClass('msg barman').text(msgString).appendTo(wrapper);
+}
+
+function showVillainMessage(msgString) {
+  console.assert(typeof msgString === 'string');
+  $('.msg.villain').remove();
+  $('<div></div>').addClass('msg villain').text(msgString).appendTo(wrapper);
 }
 
 function showPlayerMessage(msg) {
   const text = msg.text;
   console.assert(typeof text === 'string');
+  $('.msg.player').remove();
   $('<div></div>').addClass('msg player').text(text).appendTo(wrapper);
   $('.msg.barman').css({left: -WIDTH});
   if (msg.response) {
@@ -132,7 +204,12 @@ function showPlayerMessage(msg) {
       showBarmanMessage(msg.response);
     }, 500);
   }
+  if (msg.effect) {
+    console.assert(typeof msg.effect === 'function');
+    setTimeout(msg.effect, 2000);
+  }
   if (msg.isTerminal) {
+    footstepsSound.play();
     setTimeout(startNewScene, 5000);
   }
 }
@@ -141,7 +218,38 @@ function startNewScene() {
   $('.msg').remove();
   const newScene = (currentScene === 3)? 1 : currentScene+1;
   switchScene(newScene);
-  console.log('NEWSCENE');
+
+  // TODO: move startConversation here as branch 1
+  if (newScene === 2) {
+    startScene2();
+  } else {
+    glass.hide();
+    glass.css({
+      left: GLASS_POSITION.x0,
+      top: GLASS_POSITION.y0
+    });
+  }
+}
+
+function passDrink() {
+  console.assert(currentScene === 2);
+  glass.show();
+  setTimeout(() => {
+    slideSound.play();
+    glassSliding = true;
+    slideStart = lastDrawTime;
+  }, 500);
+  setTimeout(() => {
+    pourSound.play();
+    glassFilling = true;
+    fillStart = lastDrawTime;
+  }, 3000);
+}
+
+function cockGun() {
+  setTimeout(() => {
+    cockingSound.play();
+  }, 500);
 }
 
 function switchScene(newIndex) {
@@ -152,27 +260,9 @@ function switchScene(newIndex) {
   wrapper.removeClass('scene1 scene2 scene3');
   wrapper.addClass('scene' + currentScene);
 
-  if (currentScene === 2) {
-    glass.show();
-    setTimeout(() => {
-      slideSound.play();
-      glassSliding = true;
-      slideStart = lastDrawTime;
-    }, 500);
-    setTimeout(() => {
-      pourSound.play();
-      glassFilling = true;
-      fillStart = lastDrawTime;
-    }, 3000);
-  } else {
-    glass.hide();
-  }
-
   if (currentScene === 3) {
     crosshairs.show();
-    setTimeout(() => {
-      cockingSound.play();
-    }, 500);
+    cockGun();
   } else {
     crosshairs.hide();
   }

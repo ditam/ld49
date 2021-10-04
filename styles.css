@@ -180,3 +180,13 @@ body {
   border-bottom: 3px solid #22009b;
   border-radius: 10px;
 }
+
+.msg.villain {
+  top: 60px;
+  right: 0;
+  padding-right: 80px;
+  border-bottom: 3px solid #630808;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+  transition: right 0.5s;
+}
