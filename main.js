@@ -456,7 +456,7 @@ function animationStep(time) {
   lastDrawTime = time;
   const cycleTime = Math.max(2000, 5000 - drinkCounter * 200);
   const t = time / cycleTime;
-  const wobbleRadius = Math.min(60 + drinkCounter * 80, 500);
+  const wobbleRadius = (drinkCounter === 1)? 10 : Math.min(drinkCounter * 80, 500);
   diffX = Math.sin(t * Math.PI*2) * wobbleRadius;
   diffY = Math.sin(t * Math.PI*2) * Math.cos(t * Math.PI*2) * wobbleRadius;
 
