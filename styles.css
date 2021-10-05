@@ -6,6 +6,7 @@ body {
 
 #main-wrapper {
   position: relative;
+  overflow: hidden;
 }
 
 #main-wrapper .cover {
