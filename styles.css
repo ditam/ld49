@@ -273,3 +273,22 @@ body {
   width: 150px;
   height: 300px;
 }
+
+/* font loading hack */
+#dummy1 {
+  font-family: 'Sancreek', cursive;
+  opacity: 0;
+}
+#dummy2 {
+  font-family: 'Rye', cursive;
+  opacity: 0;
+}
+#dummy3 {
+  font-family: 'Libre Baskerville', serif;
+  opacity: 0;
+}
+#dummy4 {
+  font-family: 'Libre Baskerville', serif;
+  font-style: italic;
+  opacity: 0;
+}
