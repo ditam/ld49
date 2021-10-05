@@ -44,6 +44,7 @@ let fillStart = 0;
 let daysSpent = 0;
 let didShoot = false;
 let drinkCounter = 0;
+let attemptsCount = 0;
 
 function playIntro() {
   // Intro starts when cover is removed and music is started
@@ -175,12 +176,55 @@ function startWhatDrinkConvo() {
   // TODO: branch based on daysSpent -> unlock victory path
   const drinkName = getRandomItem(['Mule Skinner', 'Whiskey', 'Rotgut', 'Moonshine', 'Sheepdip']);
   showBarmanMessage(drinkName);
+  const options = [
+    { text: 'What\'s it like?', effect: randomDesc },
+    { text: 'I\'ll take it.', effect: getDrink }
+  ];
+  if (drinkCounter > 4) {
+    if (attemptsCount === 0) {
+      options.push(
+        { text: 'Can I get... something weaker?', effect: attempt1 }
+      );
+    } else if (attemptsCount === 1) {
+      options.push(
+        { text: 'I want to stop, but this guy keeps pushing me.', effect: attempt2 }
+      );
+    } else {
+      options.push(
+        { text: 'Please help me. I shouldn\'t drink more.', effect: attempt3 }
+      );
+    }
+  }
+  setTimeout(() => {
+    showOptions(options);
+  }, 2000);
+}
+
+function attempt1() {
+  doorSound.play();
+  attemptsCount++;
+  showVillainMessage('Weaker!? Boone, don\'t embarass me!');
   setTimeout(() => {
     showOptions([
-      { text: 'What\'s it like?', effect: randomDesc },
-      { text: 'I\'ll take it.', effect: getDrink }
+      { text: 'Right... I\'ll just take a whiskey.', effect: getDrink }
     ]);
-  }, 2000);
+  }, 3000);
+}
+
+function attempt2() {
+  attemptsCount++;
+  showBarmanMessage('What guy?');
+  setTimeout(getDrink, 3000);
+}
+
+function attempt3() {
+  attemptsCount++;
+  showBarmanMessage('I\'m glad you agree, Colton. Have some water.');
+  liquid.css({
+    'background-color': 'rgba(200, 200, 200, 0.1)',
+    'border': 'none'
+  });
+  setTimeout(getDrink, 3000);
 }
 
 function getDrink() {
@@ -193,6 +237,28 @@ function getDrink() {
 }
 
 function scene2Ending() {
+  if (attemptsCount === 3) {
+    // victory, show game ending instead of scene 3
+    const scr = $('<div></div>').addClass('quote-screen');
+    quote = `
+      <div>Till Seraphs swing their snowy Hats – </div>
+      <div>And Saints – to windows run – </div>
+      <div>To see the little Tippler</div>
+      <div>Leaning against the – Sun!</div>
+      <div class="author">/ Emily Dickinson /</div>
+    `;
+    $('<div></div>').addClass('quote').html(quote).appendTo(scr);
+    scr.appendTo(wrapper);
+
+    setTimeout(() => {
+      const newCover = $('<div></div>').addClass('cover');
+      const victoryMsg = $('<div></div>').text('Congratulations! Thank you for playing.');
+      scr.remove();
+      victoryMsg.appendTo(newCover);
+      newCover.appendTo(wrapper);
+    }, 15000);
+    return;
+  }
   drinkCounter++;
   // TODO: it would be nice to have an animation here too
   glass.hide();
