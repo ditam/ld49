@@ -173,7 +173,6 @@ function startWhatDrinkConvo() {
     }, 2500);
   }
 
-  // TODO: branch based on daysSpent -> unlock victory path
   const drinkName = getRandomItem(['Mule Skinner', 'Whiskey', 'Rotgut', 'Moonshine', 'Sheepdip']);
   showBarmanMessage(drinkName);
   const options = [
@@ -239,6 +238,8 @@ function getDrink() {
 function scene2Ending() {
   if (attemptsCount === 3) {
     // victory, show game ending instead of scene 3
+    glass.remove();
+    $('.msg').remove();
     const scr = $('<div></div>').addClass('quote-screen');
     quote = `
       <div>Till Seraphs swing their snowy Hats – </div>
