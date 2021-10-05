@@ -180,7 +180,7 @@ function startWhatDrinkConvo() {
     { text: 'What\'s it like?', effect: randomDesc },
     { text: 'I\'ll take it.', effect: getDrink }
   ];
-  if (drinkCounter > 4) {
+  if (drinkCounter > 3) {
     if (attemptsCount === 0) {
       options.push(
         { text: 'Can I get... something weaker?', effect: attempt1 }
@@ -455,7 +455,7 @@ function animationStep(time) {
   lastDrawTime = time;
   const cycleTime = Math.max(2000, 5000 - drinkCounter * 200);
   const t = time / cycleTime;
-  const wobbleRadius = Math.min(60 + drinkCounter * 60, 300);
+  const wobbleRadius = Math.min(60 + drinkCounter * 80, 500);
   diffX = Math.sin(t * Math.PI*2) * wobbleRadius;
   diffY = Math.sin(t * Math.PI*2) * Math.cos(t * Math.PI*2) * wobbleRadius;
 
