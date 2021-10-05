@@ -410,11 +410,19 @@ function animationStep(time) {
 }
 
 const crosshairSize = 64;
+function getCrosshairPosition() {
+  return {
+    x: Math.min(mouseX + diffX, WIDTH - crosshairSize/2),
+    y: Math.min(mouseY + diffY, HEIGHT - crosshairSize/2)
+  };
+}
+
 function drawCrosshairs() {
   if (currentScene === 3) {
+    const pos = getCrosshairPosition();
     crosshairs.css({
-      left: Math.min(mouseX + diffX, WIDTH - crosshairSize/2),
-      top: Math.min(mouseY + diffY, HEIGHT - crosshairSize/2)
+      left: pos.x,
+      top: pos.y
     });
   }
 }
@@ -511,10 +519,16 @@ $(document).ready(function() {
     return false;
   });
 
+  function isHit(pos, hitbox) {
+    return (
+      pos.x > hitbox.x0 && pos.x < hitbox.x1 &&
+      pos.y > hitbox.y0 && pos.y < hitbox.y1
+    );
+  }
+
   wrapper.on('click', event => {
     if (currentScene === 3) {
-      // TODO: shot calculation should use the same coords as the crosshair
-      console.log('shot at:', event.clientX, event.clientY);
+      const pos = getCrosshairPosition();
       gunshotSound.play();
 
       shapeSide.hide();
@@ -524,9 +538,8 @@ $(document).ready(function() {
       daysSpent++;
       setTimeout(startNewScene, 12000);
 
-      // FIXME: based on shot location
       let scr, quote;
-      if (event.clientX < 200) {
+      if (pos.x < 200) {
         scr = $('<div></div>').addClass('quote-screen');
         quote = `
           <div>I went to the worst of bars</div>
@@ -539,8 +552,11 @@ $(document).ready(function() {
         `;
         $('<div></div>').addClass('quote').html(quote).appendTo(scr);
         scr.appendTo(wrapper);
-        // TODO: continue on scene 1 after timeout
-      } else if (Math.random() < 0.5) {
+      } else if (
+        isHit(pos, {x0: 500, x1: 600, y0: 202, y1: 462}) ||
+        isHit(pos, {x0: 800, x1: 900, y0: 203, y1: 483}) ||
+        isHit(pos, {x0: 1120, x1: 1220, y0: 204, y1: 504})
+      ) {
         setTimeout(() => {
           bottleBreakSound.play();
         }, 300);
