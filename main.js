@@ -42,6 +42,7 @@ let glassFilling = false;
 let slideStart = 0;
 let fillStart = 0;
 let daysSpent = 0;
+let didShoot = false;
 
 function playIntro() {
   // Intro starts when cover is removed and music is started
@@ -345,6 +346,7 @@ function switchScene(newIndex) {
   shapeSide.hide();
 
   if (currentScene === 3) {
+    didShoot = false;
     crosshairs.show();
     bottles.show();
     shapeSide.fadeTo(3000, 0.8);
@@ -514,10 +516,12 @@ $(document).ready(function() {
     cover.remove();
     playNextSong();
 
-    playIntro();
-
-    // DEBUG
-    //startConversation();
+    const DEBUG = false;
+    if (!DEBUG) {
+      playIntro();
+    } else {
+      startConversation();
+    }
 
     return false;
   });
@@ -531,6 +535,11 @@ $(document).ready(function() {
 
   wrapper.on('click', event => {
     if (currentScene === 3) {
+      if (didShoot) {
+        // disallow further shooting - quote screen is already showing
+        return;
+      }
+      didShoot = true;
       const pos = getCrosshairPosition();
       gunshotSound.play();
 
