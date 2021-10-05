@@ -193,6 +193,9 @@ function getDrink() {
 function scene2Ending() {
   // TODO: it would be nice to have an animation here too
   glass.hide();
+  liquid.css({
+    opacity: 0
+  });
   setTimeout(() => {
     $('.msg.player').remove();
     doorSound.play();
