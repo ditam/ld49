@@ -124,13 +124,13 @@ function startConversation() {
     msg = 'Hello, Colton. How was your day?';
     options = [
       { text: 'Hey!', response: 'Let me guess, a drink?', isTerminal: true },
-      { text: 'Not too bad, thanks.', response: 'How about a drink?', isTerminal: true },
+      { text: 'Can\'t complain.', response: 'How about a drink?', isTerminal: true },
       { text: 'My day starts when I see you, Luna.', response: 'Oh, you charmer. A drink\'s 5 cents for everyone.', isTerminal: true }
     ];
   } else {
     msg = getRandomItem(['Howdy, cowboy.', 'Colton.', 'Good day.']);
     options = [
-      { text: 'How you doin?', response: 'Good, how are you?', isTerminal: true },
+      { text: 'How you doin?', response: (drinkCounter < 5? 'Good, how are you?' : 'How are you, Colton? Looking rough.'), isTerminal: true },
       { text: 'Always a pleasure.', response: 'I don\'t doubt that.', isTerminal: true }
     ];
   }
@@ -163,7 +163,7 @@ function startWhatDrinkConvo() {
         'It\'s sweeter than honey.',
         'It\'s stronger than steam.',
         'It\'ll make the lame walk.',
-        'It\'ll make the dumb talk'
+        'It\'ll make the dumb talk.'
       ]);
       showBarmanMessage(description);
     }, 2000);
@@ -202,11 +202,19 @@ function scene2Ending() {
   setTimeout(() => {
     $('.msg.player').remove();
     doorSound.play();
-    showVillainMessage('Boone!');
+    if (drinkCounter < 2) {
+      showVillainMessage('Boone!');
+    } else if (drinkCounter < 4) {
+      showVillainMessage('Boone you rascal!');
+    } else if (drinkCounter < 6) {
+      showVillainMessage('Booooooooooney boy!');
+    } else {
+      showVillainMessage('BOONE! My man. I hate you.');
+    }
   }, 2000);
   setTimeout(() => {
     switchScene(1);
-    shapeFront.fadeTo(2000, 0.8);
+    shapeFront.fadeTo(3000, 0.8);
   }, 4000);
   setTimeout(() => {
     let msg, options;
@@ -217,12 +225,19 @@ function scene2Ending() {
         { text: 'I just wanted to have a drink first.', villainResponse: 'Helps with your aim?', isTerminal: true, targetScene: 3 },
         { text: 'What do you mean?', villainResponse: 'Show me if you can shoot yet.', isTerminal: true, targetScene: 3 }
       ];
-    } else {
+    } else if (drinkCounter < 5) {
       msg = 'I knew I\'d find you here.';
       options = [
         { text: 'Have you been practicing?', villainResponse: 'I\'ll show you.', isTerminal: true, targetScene: 3 },
         { text: 'You\'re a true detective.', villainResponse: 'And a sharpshooter.', isTerminal: true, targetScene: 3 },
         { text: 'Let\'s get it over with.', villainResponse: 'After you.', isTerminal: true, targetScene: 3 }
+      ];
+    } else {
+      msg = 'Let\'s do it again.';
+      options = [
+        { text: 'Do what?', villainResponse: 'Ha ha.', isTerminal: true, targetScene: 3 },
+        { text: 'Leave me alone.', villainResponse: 'You wish.', isTerminal: true, targetScene: 3 },
+        { text: 'I\'ve had enough.', villainResponse: 'Shouldn\'t have called me, then.', isTerminal: true, targetScene: 3 }
       ];
     }
     showVillainMessage(msg);
@@ -351,7 +366,7 @@ function switchScene(newIndex) {
     didShoot = false;
     crosshairs.show();
     bottles.show();
-    shapeSide.fadeTo(3000, 0.8);
+    shapeSide.fadeTo(4000, 0.8);
     cockGun();
   } else {
     crosshairs.hide();
