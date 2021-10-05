@@ -43,6 +43,7 @@ let slideStart = 0;
 let fillStart = 0;
 let daysSpent = 0;
 let didShoot = false;
+let drinkCounter = 0;
 
 function playIntro() {
   // Intro starts when cover is removed and music is started
@@ -192,6 +193,7 @@ function getDrink() {
 }
 
 function scene2Ending() {
+  drinkCounter++;
   // TODO: it would be nice to have an animation here too
   glass.hide();
   liquid.css({
@@ -370,10 +372,9 @@ let diffY = 0;
 let lastDrawTime;
 function animationStep(time) {
   lastDrawTime = time;
-  const cycleTime = 5000;
+  const cycleTime = Math.max(2000, 5000 - drinkCounter * 200);
   const t = time / cycleTime;
-  // TODO: this and cycleTime will increase with drunkenness
-  const wobbleRadius = 60;
+  const wobbleRadius = Math.min(60 + drinkCounter * 60, 300);
   diffX = Math.sin(t * Math.PI*2) * wobbleRadius;
   diffY = Math.sin(t * Math.PI*2) * Math.cos(t * Math.PI*2) * wobbleRadius;
 
