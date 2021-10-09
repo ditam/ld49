@@ -621,6 +621,9 @@ $(document).ready(function() {
     );
   }
 
+  let missCount = 0;
+  let hitCount = 0;
+  let killCount = 0;
   wrapper.on('click', event => {
     if (currentScene === 3) {
       if (didShoot) {
@@ -636,10 +639,27 @@ $(document).ready(function() {
       bottles.hide();
 
       daysSpent++;
-      setTimeout(startNewScene, 12000);
+      let quoteDuration = 12000;
+      // adjust quote duration based on how many times this quote was seen
+      function adjustTiming(count) {
+        if (count > 0) {
+          quoteDuration = 10000;
+        }
+        if (count > 1) {
+          quoteDuration = 8000;
+        }
+        if (count > 2) {
+          quoteDuration = 4000;
+        }
+        if (count > 3) {
+          quoteDuration = 2000;
+        }
+      }
 
       let scr, quote;
       if (pos.x < 200) {
+        killCount++;
+        adjustTiming(killCount);
         scr = $('<div></div>').addClass('quote-screen');
         quote = `
           <div>I went to the worst of bars</div>
@@ -657,6 +677,8 @@ $(document).ready(function() {
         isHit(pos, {x0: 800, x1: 900, y0: 203, y1: 483}) ||
         isHit(pos, {x0: 1120, x1: 1220, y0: 204, y1: 504})
       ) {
+        hitCount++;
+        adjustTiming(hitCount);
         setTimeout(() => {
           bottleBreakSound.play();
         }, 300);
@@ -672,6 +694,8 @@ $(document).ready(function() {
         $('<div></div>').addClass('quote').html(quote).appendTo(scr);
         scr.appendTo(wrapper);
       } else {
+        missCount++;
+        adjustTiming(missCount);
         scr = $('<div></div>').addClass('quote-screen small');
         quote = `
           <div>O for a beaker full of the warm South,</div>
@@ -685,6 +709,8 @@ $(document).ready(function() {
         $('<div></div>').addClass('quote').html(quote).appendTo(scr);
         scr.appendTo(wrapper);
       }
+
+      setTimeout(startNewScene, quoteDuration);
     }
 
     return;
