@@ -37,7 +37,7 @@ body {
 #crosshairs {
   position: absolute;
   background-image: url(assets/img/crosshairs.png);
-  width: 64px;
+  width: 64px; /* keep in sync with js CROSSHAIR_SIZE */
   height: 64px;
   display: none;
 }

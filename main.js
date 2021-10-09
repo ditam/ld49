@@ -610,6 +610,11 @@ $(document).ready(function() {
   });
 
   function isHit(pos, hitbox) {
+    // get real position considering crosshair size (pos is top left corner of img)
+    const CROSSHAIR_SIZE = 64;
+    pos.x = pos.x + CROSSHAIR_SIZE/2;
+    pos.y = pos.y + CROSSHAIR_SIZE/2;
+
     return (
       pos.x > hitbox.x0 && pos.x < hitbox.x1 &&
       pos.y > hitbox.y0 && pos.y < hitbox.y1
